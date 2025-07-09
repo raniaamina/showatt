@@ -6,6 +6,8 @@ declare -a lines=()
 declare -a cpu_log=()
 declare -a gpu_log=()
 declare -a total_log=()
+cpu_name=$(lscpu | grep 'Model name' | awk -F: '{print $2}' | sed 's/^[ \t]*//')
+gpu_name=$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -n1)
 
 clear
 while true; do
@@ -56,13 +58,17 @@ while true; do
     # Tampilkan
     clear
     echo ""
-    echo "                              Show Watt?"
+    echo "                            Show Watt?"
+    echo "                      $(date '+%Y-%m-%d') - $(hostname)"
     echo ""
-    echo "=====================+===============+===============+==============="
-    echo "Timestamp            |   CPU Power   |   GPU Power   |   Total Power"
-    echo "=====================+===============+===============+==============="
+    echo " CPU : $cpu_name"
+    echo " GPU : $gpu_name"
+    echo 
+    echo " =====================+===============+===============+==============="
+    echo " Timestamp            |   CPU Power   |   GPU Power   |   Total Power"
+    echo " =====================+===============+===============+==============="
     for entry in "${lines[@]}"; do
-        echo "$entry"
+        echo " $entry"
     done
     echo "---------------------+---------------+---------------+---------------"
     echo

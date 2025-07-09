@@ -8,5 +8,5 @@ Just run
 `sudo ./showatt.sh`
 
 
-![Preview](./preview.jpg)
+![Preview](./preview.png)
 

@@ -6,8 +6,10 @@ declare -a lines=()
 declare -a cpu_log=()
 declare -a gpu_log=()
 declare -a total_log=()
+
 cpu_name=$(lscpu | grep 'Model name' | awk -F: '{print $2}' | sed 's/^[ \t]*//')
 gpu_name=$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -n1)
+start_time=$(date +%s)
 
 clear
 while true; do
@@ -55,6 +57,11 @@ while true; do
     total_max=$(printf "%s\n" "${total_log[@]}" | LC_NUMERIC=C sort -n | tail -1)
     total_avg=$(echo "${total_log[@]}" | awk '{sum=0; for(i=1;i<=NF;i++) sum+=$i; printf("%.2f", sum/NF)}')
 
+    # Hitung durasi monitoring
+    now_time=$(date +%s)
+    duration=$((now_time - start_time))
+    duration_fmt=$(printf "%02d:%02d:%02d" $((duration/3600)) $(((duration%3600)/60)) $((duration%60)))
+
     # Tampilkan
     clear
     echo ""
@@ -72,7 +79,7 @@ while true; do
     done
     echo "---------------------+---------------+---------------+---------------"
     echo
-    echo " Summary:"
+    echo " Summary ($duration_fmt):"
     LC_NUMERIC=C printf "   CPU   ->  Min: %5.2f W   Max: %5.2f W   Avg: %5.2f W\n" "$cpu_min" "$cpu_max" "$cpu_avg"
     LC_NUMERIC=C printf "   GPU   ->  Min: %5.2f W   Max: %5.2f W   Avg: %5.2f W\n" "$gpu_min" "$gpu_max" "$gpu_avg"
     LC_NUMERIC=C printf "   Total ->  Min: %5.2f W   Max: %5.2f W   Avg: %5.2f W\n" "$total_min" "$total_max" "$total_avg"
